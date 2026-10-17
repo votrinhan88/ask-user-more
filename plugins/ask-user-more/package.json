@@ -12,10 +12,11 @@
     ".mcp.json",
     "hooks",
     "skills",
+    "pi",
     "README.md"
   ],
   "scripts": {
-    "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs && esbuild ../../packages/tui/src/host.ts --bundle --platform=node --format=esm --outfile=dist/tui.mjs",
+    "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs && esbuild ../../packages/tui/src/host.ts --bundle --platform=node --format=esm --outfile=dist/tui.mjs && esbuild pi/index.ts --bundle --platform=node --format=esm --outfile=pi/index.js --external:@earendil-works/pi-coding-agent --external:@earendil-works/pi-tui --external:@earendil-works/pi-ai",
     "typecheck": "tsc --noEmit",
     "start": "node dist/server.mjs",
     "test": "tsx --test test/*.test.ts test/*.test.mjs",
@@ -28,6 +29,20 @@
     "@modelcontextprotocol/sdk": "^1.32.1",
     "zod": "^4.6.7",
     "@ask-user-more/core": "*",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "@earendil-works/pi-coding-agent": "^1.3.0",
+    "@earendil-works/pi-ai": "^1.3.0"
+  },
+  "keywords": [
+    "pi-package",
+    "claude-code-plugin",
+    "ask-user",
+    "mcp",
+    "elicitation"
+  ],
+  "pi": {
+    "extensions": [
+      "./pi/index.js"
+    ]
   }
 }

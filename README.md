@@ -15,7 +15,8 @@ ask-user-more/
 
 - **Claude Code**: install the plugin from this marketplace, or run the MCP server
   with `npx ask-user-more`.
-- **Pi**: `pi install npm:ask-user-more` once the `pi` manifest lands.
+- **Pi**: `pi install npm:ask-user-more` (the same package declares a `pi` extension),
+  or `pi -e ./plugins/ask-user-more/pi/index.js` locally.
 - **Other MCP clients**: point their native MCP config at `ask-user-more` and pass
   `ASK_USER_MORE_*` env vars for project-level settings.
 

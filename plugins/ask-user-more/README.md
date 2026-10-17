@@ -3,9 +3,9 @@
 Richer multiple-choice questions than Claude's built-in `AskUserQuestion`:
 a **note** on every question, **no four-option limit**, and **multiple questions per round**.
 
-> This is the Claude Code build. The pi terminal build lives at
-> `~/.pi/agent/extensions/ask-user-more/` and keeps the arrow-key TUI.
-> Claude Code cannot load pi extensions; MCP is its only model-callable extension point.
+> The npm package is dual: Claude Code (MCP server + plugin) and pi (extension).
+> Claude Code cannot load pi extensions; MCP is its model-callable point. The pi
+> extension mounts the same arrow-key TUI component.
 
 ## What you get
 
@@ -39,7 +39,7 @@ a **note** on every question, **no four-option limit**, and **multiple questions
 
 Set the renderer in `userConfig` (`claude plugin configure ask-user-more`), in native
 project settings, or per call. `auto` launches the TUI only from terminal hosts; VS Code
-and other GUI hosts get the native form.
+and other GUI hosts get the native form. Pi always uses the TUI.
 
 ## Requirements
 
@@ -72,6 +72,18 @@ hook and no `userConfig`; use native harness settings or `ASK_USER_MORE_*` env v
 ```bash
 claude mcp add ask-user-more -s user -- npx -y ask-user-more
 ```
+
+### Pi
+
+```bash
+pi install npm:ask-user-more
+# local checkout:
+pi -e ./plugins/ask-user-more/pi/index.js
+```
+
+The first pi session asks once to enable AskUserMore and stores the answer in
+`~/.pi/agent/settings.json` under `"askUserMore"`. Change it later with
+`/ask-user-more-config`. Pi always uses the native TUI; `renderer` applies to MCP clients.
 
 ### 4. Marketplace
 
