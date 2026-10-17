@@ -1,7 +1,7 @@
 {
   "name": "ask-user-more",
   "version": "0.1.0",
-  "description": "AskUserMore — richer multiple-choice questions for Claude Code",
+  "description": "AskUserMore \u2014 richer multiple-choice questions for Claude Code",
   "type": "module",
   "bin": {
     "ask-user-more": "dist/server.mjs"
@@ -15,7 +15,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs",
+    "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs && esbuild ../../packages/tui/src/host.ts --bundle --platform=node --format=esm --outfile=dist/tui.mjs",
     "typecheck": "tsc --noEmit",
     "start": "node dist/server.mjs",
     "test": "tsx --test test/*.test.ts test/*.test.mjs",

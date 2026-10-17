@@ -1,0 +1,26 @@
+{
+  "name": "@ask-user-more/tui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "esbuild src/host.ts --bundle --platform=node --format=esm --outfile=dist/tui.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ask-user-more/core": "*"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-tui": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-tui": "1.3.0",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.0"
+  }
+}

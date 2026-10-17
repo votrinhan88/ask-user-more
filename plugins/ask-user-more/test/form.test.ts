@@ -84,11 +84,11 @@ test("validateQuestions rejects duplicate labels", () => {
 
 test("renderAnswerText uses inline and block notes", () => {
 	const answers = [
-		{ header: "Q1", question: "Pick one?", selected: ["Postgres"], note: "short" },
-		{ header: "Q2", question: "Pick many?", selected: ["Auth", "Public API"], note: "a\nb" },
+		{ header: "Q1", question: "Which database?", selected: ["Postgres"], note: "short" },
+		{ header: "Q2", question: "Which scope?", selected: ["Auth", "Public API"], note: "a\nb" },
 	];
 	assert.equal(
 		renderAnswerText(answers, questions),
-		"[Q1] Pick one?\n [2] Postgres | [Note] short\n[Q2] Pick many?\n [1] Auth | [3] Public API\n [Note]\n | a\n | b",
+		"[Q1] Which database?\n [2] Postgres | [Note] short\n[Q2] Which scope?\n [1] Auth | [3] Public API\n [Note]\n | a\n | b",
 	);
 });

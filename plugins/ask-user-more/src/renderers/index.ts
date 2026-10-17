@@ -1,26 +1,46 @@
-/** Renderer selection: config first, host detection later. */
+/** Renderer selection: explicit config, then host detection for `auto`. */
 
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
 import type { AskUserMoreConfig } from "@ask-user-more/core";
 import type { AskAnswer, AskQuestion } from "@ask-user-more/core";
 import { askViaElicitation } from "./elicitation.ts";
+import { askViaTerminal, isTerminalHost } from "./terminal.ts";
 import { askViaWeb } from "./web.ts";
+
+export interface RenderOutcome {
+	answers?: AskAnswer[];
+	cancelled?: boolean;
+}
 
 export async function askQuestions(
 	server: Server,
 	questions: AskQuestion[],
 	config: AskUserMoreConfig,
 	warnings: string[],
-): Promise<AskAnswer[] | undefined> {
+): Promise<RenderOutcome> {
 	if (config.renderer === "web") {
-		return askViaWeb(questions, { warnings });
+		const answers = await askViaWeb(questions, { warnings });
+		return answers ? { answers } : { cancelled: true };
 	}
-	if (config.renderer === "terminal") {
-		// The standalone TUI lands in the next increment; do not fail the call.
-		console.error("ask-user-more: terminal renderer not built yet; using elicitation");
-		return askViaElicitation(server, questions, config, warnings);
+
+	if (config.renderer === "terminal" || (config.renderer === "auto" && isTerminalHost())) {
+		const result = await askViaTerminal(questions, { config });
+		if (result.answers) return { answers: result.answers };
+		if (result.cancelled) return { cancelled: true };
+		// The launcher was unavailable; fall through to the native form.
 	}
-	// auto: host detection (terminal -> TUI) arrives with the terminal renderer.
-	return askViaElicitation(server, questions, config, warnings);
+
+	try {
+		const answers = await askViaElicitation(server, questions, config, warnings);
+		return answers ? { answers } : { cancelled: true };
+	} catch {
+		if (config.renderer === "auto") {
+			const answers = await askViaWeb(questions, { warnings });
+			return answers ? { answers } : { cancelled: true };
+		}
+		throw new Error(
+			"AskUserMore: this client does not support elicitation. Set renderer=web or renderer=terminal.",
+		);
+	}
 }

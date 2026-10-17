@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npm run build -w ask-user-more",
     "test": "npm run test -w @ask-user-more/core && npm run test -w ask-user-more",
-    "typecheck": "npm run typecheck -w @ask-user-more/core && npm run typecheck -w ask-user-more",
+    "typecheck": "npm run typecheck -w @ask-user-more/core && npm run typecheck -w @ask-user-more/tui && npm run typecheck -w ask-user-more",
     "integration": "npm run test:integration -w ask-user-more",
     "validate": "claude plugin validate plugins/ask-user-more"
   },

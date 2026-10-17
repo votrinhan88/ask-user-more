@@ -34,10 +34,12 @@ a **note** on every question, **no four-option limit**, and **multiple questions
 |---|---|---|
 | `elicitation` | Native inline form (Claude Code 2.1.302+) | available |
 | `web` | Loopback browser form (`127.0.0.1`, random port, one-time token) | available |
-| `terminal` | Standalone TUI in a new terminal window | next increment; currently falls back to elicitation |
-| `auto` | Host-based selection | currently elicitation; terminal detection lands with the TUI |
+| `terminal` | Standalone pi TUI in a new terminal window | available |
+| `auto` | Terminal host → TUI; GUI host → elicitation, web fallback | available |
 
-Set the renderer in `userConfig` (`claude plugin configure ask-user-more`) or per call.
+Set the renderer in `userConfig` (`claude plugin configure ask-user-more`), in native
+project settings, or per call. `auto` launches the TUI only from terminal hosts; VS Code
+and other GUI hosts get the native form.
 
 ## Requirements
 
@@ -202,8 +204,9 @@ npm run validate     # claude plugin validate plugins/ask-user-more
 
 ## Limits
 
-- Elicitation and web renderers are out-of-band or generic forms; the exact pi TUI
-  (arrow keys, Ctrl+S, custom colors/summary) is the `terminal` renderer, landing next.
+- The `terminal` renderer launches the exact pi TUI in a new terminal window and waits
+  for its result file. It needs a terminal emulator; if none is available, the call falls
+  back to the native form.
 - The server reads the harness's native settings files and, for `web`, serves a
   loopback-only form and opens a browser. It makes no outbound network calls.
 - `force` is user-level only; project files cannot replace your built-in.

@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 
 const child = spawn(process.execPath, ["dist/server.mjs"], {
 	stdio: ["pipe", "pipe", "inherit"],
-	env: { ...process.env, ASK_USER_MORE_USER_ENABLED: "true" },
+	env: { ...process.env, ASK_USER_MORE_USER_ENABLED: "true", ASK_USER_MORE_RENDERER: "elicitation" },
 });
 const rl = createInterface({ input: child.stdout });
 const send = (obj) => child.stdin.write(`${JSON.stringify(obj)}\n`);

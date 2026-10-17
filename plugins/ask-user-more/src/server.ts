@@ -111,8 +111,8 @@ server.registerTool(
 		if (countWarning) warnings.push(countWarning);
 
 		try {
-			const answers = await askQuestions(server.server, questions, config, warnings);
-			if (!answers) {
+			const outcome = await askQuestions(server.server, questions, config, warnings);
+			if (!outcome.answers) {
 				return {
 					content: [
 						{
@@ -126,7 +126,7 @@ server.registerTool(
 				};
 			}
 
-			const text = renderAnswerText(answers, questions);
+			const text = renderAnswerText(outcome.answers, questions);
 			const warningText = warnings.length > 0 ? `\n\nNote:\n- ${warnings.join("\n- ")}` : "";
 
 			return {

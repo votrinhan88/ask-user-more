@@ -36640,29 +36640,133 @@ function questionWarning(count, config2) {
   if (config2.warnQuestionsAt <= 0 || count < config2.warnQuestionsAt) return void 0;
   return `${count} questions were asked (warn at ${config2.warnQuestionsAt}). Consider splitting into rounds of 4.`;
 }
-function orderedSelection(selected, options) {
+function orderedSelection(input2, options) {
+  const selected = Array.isArray(input2) ? input2 : input2.selected;
   const rank = new Map(options.map((option, i) => [option.label, i]));
   return [...selected].sort((a, b) => (rank.get(a) ?? -1) - (rank.get(b) ?? -1));
 }
 
 // ../../packages/core/src/format.ts
-function picksFor(answer, options) {
-  if (answer.selected.length === 0) return "(none)";
-  return answer.selected.map((label) => {
-    const index = options.findIndex((option) => option.label === label);
-    return index >= 0 ? `[${index + 1}] ${label}` : label;
-  }).join(" | ");
+function stripAnsi(text) {
+  return text.replace(/\u001b\[[0-9;]*m/g, "");
 }
-function renderAnswerText(answers, questions) {
-  return answers.map((answer, i) => {
-    const options = questions[i]?.options ?? [];
-    const head = `[Q${i + 1}] ${answer.question}
- ${picksFor(answer, options)}`;
-    if (!answer.note) return head;
-    const lines = answer.note.split(/\r?\n/);
-    if (lines.length === 1) return `${head} | [Note] ${answer.note}`;
-    return [head, " [Note]", ...lines.map((line) => ` | ${line}`)].join("\n");
-  }).join("\n");
+var naiveMetrics = {
+  width: (text) => stripAnsi(text).length,
+  slice: (text, start, length) => stripAnsi(text).slice(start, start + length)
+};
+var identity = (s) => s;
+var plainPaint = {
+  qTag: identity,
+  question: identity,
+  index: identity,
+  label: identity,
+  sep: identity,
+  none: identity,
+  noteTag: identity,
+  noteText: identity,
+  bar: identity
+};
+function hardBreak(word, limit, metrics) {
+  if (limit <= 0 || metrics.width(word) <= limit) return [word];
+  const chunks = [];
+  let rest = word;
+  while (rest && metrics.width(rest) > limit) {
+    const chunk = metrics.slice(rest, 0, limit);
+    if (!chunk) {
+      chunks.push(rest);
+      return chunks;
+    }
+    chunks.push(chunk);
+    rest = rest.slice(chunk.length);
+  }
+  if (rest) chunks.push(rest);
+  return chunks;
+}
+function wrapPicks(selected, options, paint, width, metrics) {
+  if (selected.length === 0) return [];
+  const inlineSep = paint.sep(" | ");
+  const leadingSep = paint.sep("| ");
+  const lines = [];
+  let cur = null;
+  for (const label of selected) {
+    const n = options.findIndex((o) => o.label === label) + 1;
+    const prefix = n > 0 ? `${paint.index(`[${n}]`)} ` : "";
+    const words = label.split(/\s+/).filter(Boolean);
+    let firstWord = true;
+    for (const word of words) {
+      const limit = width === void 0 ? Infinity : Math.max(1, width - (firstWord ? metrics.width(prefix) : 0));
+      const chunks = limit === Infinity ? [word] : hardBreak(word, limit, metrics);
+      for (let c = 0; c < chunks.length; c++) {
+        const startsPick = firstWord && c === 0;
+        const piece = `${startsPick ? prefix : ""}${paint.label(chunks[c])}`;
+        if (cur === null) {
+          cur = startsPick ? piece : piece;
+          continue;
+        }
+        const joiner = startsPick ? inlineSep : c > 0 ? "" : " ";
+        const candidate = `${cur}${joiner}${piece}`;
+        if (width !== void 0 && metrics.width(candidate) > width) {
+          lines.push(cur);
+          cur = startsPick ? `${leadingSep}${piece}` : piece;
+        } else {
+          cur = candidate;
+        }
+      }
+      firstWord = false;
+    }
+  }
+  if (cur !== null) lines.push(cur);
+  return lines;
+}
+function answerLines(answer, question, options, paint = plainPaint, maxWidth, metrics = naiveMetrics) {
+  const indent = " ";
+  const picks = wrapPicks(
+    answer?.selected ?? [],
+    options,
+    paint,
+    maxWidth === void 0 ? void 0 : maxWidth - metrics.width(indent),
+    metrics
+  );
+  const pickLines = picks.length ? picks.map((line, i) => `${i === 0 ? indent : " ".repeat(metrics.width(indent))}${line}`) : [`${indent}${paint.none("(none)")}`];
+  const head = paint.question(question);
+  if (!answer?.note) return [head, ...pickLines];
+  const noteLines = answer.note.split(/\r?\n/);
+  const noteTag = paint.noteTag("[Note]");
+  const inlineTail = ` | ${noteTag} ${paint.noteText(answer.note)}`;
+  if (noteLines.length === 1) {
+    const last = pickLines[pickLines.length - 1] ?? "";
+    const fits = maxWidth === void 0 || metrics.width(last) + metrics.width(inlineTail) <= maxWidth;
+    if (fits) {
+      pickLines[pickLines.length - 1] = last + inlineTail;
+      return [head, ...pickLines];
+    }
+  }
+  return [
+    head,
+    ...pickLines,
+    `${indent}${noteTag}`,
+    ...noteLines.map((line) => `${indent}${paint.bar("| ")}${paint.noteText(line)}`)
+  ];
+}
+function renderAnswers(answers, questions, paint = plainPaint, maxWidth, metrics = naiveMetrics) {
+  const out = [];
+  answers.forEach((answer, i) => {
+    const question = questions[i];
+    const body = answerLines(
+      answer,
+      question?.question ?? answer.question,
+      question?.options ?? [],
+      paint,
+      maxWidth,
+      metrics
+    );
+    const tag = paint.qTag(`[Q${i + 1}]`);
+    body.forEach((line, li) => out.push(li === 0 ? `${tag} ${line}` : line));
+  });
+  return out;
+}
+function renderAnswerText(answers, questions, metrics = naiveMetrics) {
+  return renderAnswers(answers, questions, plainPaint, void 0, metrics).join("\n");
 }
 
 // ../../packages/core/src/config.ts
@@ -36937,8 +37041,84 @@ async function askViaElicitation(server2, questions, config2, warnings) {
   return form.parse(result.content);
 }
 
-// src/renderers/web.ts
+// src/renderers/terminal.ts
 import { spawn } from "node:child_process";
+import { chmodSync, existsSync as existsSync2, mkdtempSync, readFileSync as readFileSync2, rmSync, writeFileSync as writeFileSync2 } from "node:fs";
+import { tmpdir } from "node:os";
+import { join as join2 } from "node:path";
+import { fileURLToPath } from "node:url";
+function isGuiHost(env = process.env) {
+  return env.TERM_PROGRAM === "vscode" || env.VSCODE_INJECTION === "1";
+}
+function isTerminalHost(env = process.env) {
+  return !isGuiHost(env) && Boolean(env.TERM || env.WT_SESSION || env.TERM_PROGRAM);
+}
+function shellQuote(value) {
+  return `'${value.replace(/'/g, `'''`)}'`;
+}
+function launch(tuiPath, requestPath, resultPath, dir) {
+  const options = { detached: true, stdio: "ignore" };
+  try {
+    if (process.platform === "win32") {
+      return spawn("cmd", ["/c", "start", "", "node", tuiPath, requestPath, resultPath], {
+        ...options,
+        windowsHide: false
+      });
+    }
+    if (process.platform === "darwin") {
+      const script = join2(dir, "run.command");
+      writeFileSync2(
+        script,
+        `#!/bin/sh
+node ${shellQuote(tuiPath)} ${shellQuote(requestPath)} ${shellQuote(resultPath)}
+`,
+        "utf8"
+      );
+      chmodSync(script, 493);
+      return spawn("open", [script], options);
+    }
+    return spawn("x-terminal-emulator", ["-e", "node", tuiPath, requestPath, resultPath], options);
+  } catch {
+    return void 0;
+  }
+}
+async function askViaTerminal(questions, options) {
+  const dir = mkdtempSync(join2(tmpdir(), "ask-user-more-"));
+  const requestPath = join2(dir, "request.json");
+  const resultPath = join2(dir, "result.json");
+  const tuiPath = options.tuiPath ?? fileURLToPath(new URL("./tui.mjs", import.meta.url));
+  try {
+    writeFileSync2(requestPath, JSON.stringify({ questions, config: options.config }), "utf8");
+    const child = launch(tuiPath, requestPath, resultPath, dir);
+    if (!child) return { unavailable: true };
+    let launchFailed = false;
+    child.on("error", () => {
+      launchFailed = true;
+    });
+    const deadline = Date.now() + (options.timeoutMs ?? 10 * 60 * 1e3);
+    while (Date.now() < deadline) {
+      if (existsSync2(resultPath)) {
+        try {
+          const result = JSON.parse(readFileSync2(resultPath, "utf8"));
+          return result.cancelled ? { cancelled: true } : { answers: result.answers ?? [] };
+        } catch {
+          return { cancelled: true };
+        }
+      }
+      if (launchFailed) return { unavailable: true };
+      await new Promise((resolve2) => setTimeout(resolve2, 200));
+    }
+    return { cancelled: true };
+  } finally {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+    }
+  }
+}
+
+// src/renderers/web.ts
+import { spawn as spawn2 } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 var MAX_BODY = 1e6;
@@ -37064,7 +37244,7 @@ function openBrowser(url2) {
   }
   const [command, args] = process.platform === "win32" ? ["cmd", ["/c", "start", "", url2]] : process.platform === "darwin" ? ["open", [url2]] : ["xdg-open", [url2]];
   try {
-    const child = spawn(command, args, { detached: true, stdio: "ignore" });
+    const child = spawn2(command, args, { detached: true, stdio: "ignore" });
     child.on("error", () => console.error(`ask-user-more web form: open manually: ${url2}`));
     child.unref();
   } catch {
@@ -37137,13 +37317,26 @@ function askViaWeb(questions, options = {}) {
 // src/renderers/index.ts
 async function askQuestions(server2, questions, config2, warnings) {
   if (config2.renderer === "web") {
-    return askViaWeb(questions, { warnings });
+    const answers = await askViaWeb(questions, { warnings });
+    return answers ? { answers } : { cancelled: true };
   }
-  if (config2.renderer === "terminal") {
-    console.error("ask-user-more: terminal renderer not built yet; using elicitation");
-    return askViaElicitation(server2, questions, config2, warnings);
+  if (config2.renderer === "terminal" || config2.renderer === "auto" && isTerminalHost()) {
+    const result = await askViaTerminal(questions, { config: config2 });
+    if (result.answers) return { answers: result.answers };
+    if (result.cancelled) return { cancelled: true };
   }
-  return askViaElicitation(server2, questions, config2, warnings);
+  try {
+    const answers = await askViaElicitation(server2, questions, config2, warnings);
+    return answers ? { answers } : { cancelled: true };
+  } catch {
+    if (config2.renderer === "auto") {
+      const answers = await askViaWeb(questions, { warnings });
+      return answers ? { answers } : { cancelled: true };
+    }
+    throw new Error(
+      "AskUserMore: this client does not support elicitation. Set renderer=web or renderer=terminal."
+    );
+  }
 }
 
 // src/server.ts
@@ -37217,8 +37410,8 @@ server.registerTool(
     const countWarning = questionWarning(questions.length, config2);
     if (countWarning) warnings.push(countWarning);
     try {
-      const answers = await askQuestions(server.server, questions, config2, warnings);
-      if (!answers) {
+      const outcome = await askQuestions(server.server, questions, config2, warnings);
+      if (!outcome.answers) {
         return {
           content: [
             {
@@ -37228,7 +37421,7 @@ server.registerTool(
           ]
         };
       }
-      const text = renderAnswerText(answers, questions);
+      const text = renderAnswerText(outcome.answers, questions);
       const warningText = warnings.length > 0 ? `
 
 Note:
