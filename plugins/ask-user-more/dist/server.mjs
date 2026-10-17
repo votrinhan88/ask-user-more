@@ -37053,6 +37053,9 @@ function isGuiHost(env = process.env) {
 function isTerminalHost(env = process.env) {
   return !isGuiHost(env) && Boolean(env.TERM || env.WT_SESSION || env.TERM_PROGRAM);
 }
+function isCodexHost(env = process.env) {
+  return Boolean(env.CODEX_HOME || env.CODEX_SANDBOX || env.CODEX_THREAD_ID || env.CODEX_MANAGED_BY_NPM);
+}
 function shellQuote(value) {
   return `'${value.replace(/'/g, `'''`)}'`;
 }
@@ -37320,7 +37323,8 @@ async function askQuestions(server2, questions, config2, warnings) {
     const answers = await askViaWeb(questions, { warnings });
     return answers ? { answers } : { cancelled: true };
   }
-  if (config2.renderer === "terminal" || config2.renderer === "auto" && isTerminalHost()) {
+  const codex = isCodexHost();
+  if (config2.renderer === "terminal" || config2.renderer === "auto" && !codex && isTerminalHost()) {
     const result = await askViaTerminal(questions, { config: config2 });
     if (result.answers) return { answers: result.answers };
     if (result.cancelled) return { cancelled: true };

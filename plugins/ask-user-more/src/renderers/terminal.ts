@@ -32,6 +32,11 @@ export function isTerminalHost(env: NodeJS.ProcessEnv = process.env): boolean {
 	return !isGuiHost(env) && Boolean(env.TERM || env.WT_SESSION || env.TERM_PROGRAM);
 }
 
+/** Codex supports elicitation, so `auto` prefers the inline form over a new window. */
+export function isCodexHost(env: NodeJS.ProcessEnv = process.env): boolean {
+	return Boolean(env.CODEX_HOME || env.CODEX_SANDBOX || env.CODEX_THREAD_ID || env.CODEX_MANAGED_BY_NPM);
+}
+
 function shellQuote(value: string): string {
 	return `'${value.replace(/'/g, `'\''`)}'`;
 }

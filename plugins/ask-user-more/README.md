@@ -85,6 +85,18 @@ The first pi session asks once to enable AskUserMore and stores the answer in
 `~/.pi/agent/settings.json` under `"askUserMore"`. Change it later with
 `/ask-user-more-config`. Pi always uses the native TUI; `renderer` applies to MCP clients.
 
+### OpenAI Codex
+
+```bash
+codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true --env ASK_USER_MORE_RENDERER=elicitation -- npx -y ask-user-more
+```
+
+Or add `[mcp_servers.ask-user-more]` to `~/.codex/config.toml`. Codex exposes the
+tool as `mcp__ask-user-more__ask_user_more`, supports project `.codex/config.toml`,
+and detects Codex in `auto` so the native elicitation form is preferred. See
+[`docs/codex.md`](docs/codex.md) for the full guide, `AGENTS.md` snippet, and
+sandbox/terminal notes.
+
 ### 4. Marketplace
 
 This repo is already a marketplace: the plugin lives at `plugins/ask-user-more/`
@@ -170,9 +182,16 @@ reads this file directly. User options still arrive natively through `userConfig
 }
 ```
 
+**OpenAI Codex** — `.codex/config.toml` (trusted projects, closest wins):
+
+```toml
+[mcp_servers.ask-user-more.env]
+ASK_USER_MORE_RENDERER = "elicitation"
+ASK_USER_MORE_WARN_OPTIONS = "5"
+```
+
 **Other MCP clients** — pass `ASK_USER_MORE_*` in their native MCP server config,
-for example `.cursor/mcp.json`, `.vscode/mcp.json`, `.gemini/settings.json`, or
-`.codex/config.toml` (`[mcp_servers.ask-user-more]`).
+for example `.cursor/mcp.json`, `.vscode/mcp.json`, or `.gemini/settings.json`.
 
 Explicit env vars override the project:
 

@@ -5,7 +5,7 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { AskUserMoreConfig } from "@ask-user-more/core";
 import type { AskAnswer, AskQuestion } from "@ask-user-more/core";
 import { askViaElicitation } from "./elicitation.ts";
-import { askViaTerminal, isTerminalHost } from "./terminal.ts";
+import { askViaTerminal, isCodexHost, isTerminalHost } from "./terminal.ts";
 import { askViaWeb } from "./web.ts";
 
 export interface RenderOutcome {
@@ -24,7 +24,8 @@ export async function askQuestions(
 		return answers ? { answers } : { cancelled: true };
 	}
 
-	if (config.renderer === "terminal" || (config.renderer === "auto" && isTerminalHost())) {
+	const codex = isCodexHost();
+	if (config.renderer === "terminal" || (config.renderer === "auto" && !codex && isTerminalHost())) {
 		const result = await askViaTerminal(questions, { config });
 		if (result.answers) return { answers: result.answers };
 		if (result.cancelled) return { cancelled: true };
