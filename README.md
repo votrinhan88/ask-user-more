@@ -13,13 +13,77 @@ ask-user-more/
 └── .claude-plugin/marketplace.json
 ```
 
-- **Claude Code**: install the plugin from this marketplace, or run the MCP server
-  with `npx ask-user-more`.
-- **Pi**: `pi install npm:ask-user-more` (the same package declares a `pi` extension),
-  or `pi -e ./plugins/ask-user-more/pi/index.js` locally.
-- **OpenAI Codex**: `codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true -- npx -y ask-user-more`.
-- **Other MCP clients**: point their native MCP config at `ask-user-more` and pass
-  `ASK_USER_MORE_*` env vars for project-level settings.
+## Install
+
+Pick your harness.
+
+<details>
+<summary><strong>Claude Code — plugin marketplace</strong></summary>
+
+```bash
+claude plugin marketplace add votrinhan88/ask-user-more
+claude plugin install ask-user-more@ask-user-more
+```
+
+</details>
+
+<details>
+<summary><strong>Claude Code — MCP only</strong></summary>
+
+```bash
+claude mcp add ask-user-more -s user -- npx -y ask-user-more
+```
+
+</details>
+
+<details>
+<summary><strong>OpenAI Codex</strong></summary>
+
+```bash
+codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true --env ASK_USER_MORE_RENDERER=elicitation -- npx -y ask-user-more
+```
+
+Then point Codex at the tool in `AGENTS.md`:
+
+```markdown
+When you need a multiple-choice answer, call `mcp__ask-user-more__ask_user_more`.
+```
+
+</details>
+
+<details>
+<summary><strong>Pi</strong></summary>
+
+```bash
+pi install npm:ask-user-more
+```
+
+Or load a local checkout for one session:
+
+```bash
+pi -e ./plugins/ask-user-more/pi/index.js
+```
+
+</details>
+
+<details>
+<summary><strong>Other MCP clients</strong></summary>
+
+```json
+{
+  "mcpServers": {
+    "ask-user-more": {
+      "command": "npx",
+      "args": ["-y", "ask-user-more"],
+      "env": { "ASK_USER_MORE_ENABLED": "true" }
+    }
+  }
+}
+```
+
+Project-level settings go in each client's native MCP config as `ASK_USER_MORE_*` env.
+
+</details>
 
 Build and test:
 
