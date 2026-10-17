@@ -52,7 +52,7 @@ and other GUI hosts get the native form. Pi always uses the TUI.
 ### 1. Local plugin
 
 ```bash
-claude --plugin-dir C:\Users\votri\ask-user-more\plugins\ask-user-more
+claude --plugin-dir C:\path\to\ask-user-more\plugins\ask-user-more
 ```
 
 `--plugin-dir` accepts a directory or a `.zip`. It loads `.claude-plugin/plugin.json`,
@@ -61,7 +61,7 @@ claude --plugin-dir C:\Users\votri\ask-user-more\plugins\ask-user-more
 ### 2. MCP server only
 
 ```bash
-claude mcp add ask-user-more -s user -- node C:\Users\votri\ask-user-more\plugins\ask-user-more\dist\server.mjs
+claude mcp add ask-user-more -s user -- node C:\path\to\ask-user-more\plugins\ask-user-more\dist\server.mjs
 ```
 
 The tool appears as `mcp__ask-user-more__ask_user_more`. MCP-only installs have no

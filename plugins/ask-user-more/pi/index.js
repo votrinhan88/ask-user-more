@@ -20527,11 +20527,15 @@ function readSettings() {
   }
 }
 function updateAskUserMore(patch) {
-  const settings = readSettings();
-  settings.askUserMore = { ...settings.askUserMore, ...patch };
-  writeFileSync2(SETTINGS_PATH, `${JSON.stringify(settings, null, 2)}
+  try {
+    const settings = readSettings();
+    settings.askUserMore = { ...settings.askUserMore, ...patch };
+    writeFileSync2(SETTINGS_PATH, `${JSON.stringify(settings, null, 2)}
 `, "utf8");
-  return settings.askUserMore;
+    return true;
+  } catch {
+    return false;
+  }
 }
 function configForPi(ctx) {
   return resolveConfig({
@@ -20660,7 +20664,9 @@ function askUserMoreExtension(pi) {
         "Enable AskUserMore?",
         "Use AskUserMore for multiple-choice questions in pi? You can change this later with /ask-user-more-config."
       );
-      updateAskUserMore({ enabled });
+      if (!updateAskUserMore({ enabled })) {
+        ctx.ui.notify("AskUserMore: could not save the consent decision; this session still honors it.", "warning");
+      }
       if (!enabled) {
         register(false);
         return;

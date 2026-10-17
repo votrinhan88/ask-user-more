@@ -8,9 +8,9 @@ One repo, one version, native per-harness installs:
 ```
 ask-user-more/
 ├── packages/core/                 # shared schema, config, state, formatting
-├── plugins/ask-user-more/         # MCP server + Claude Code plugin + npm package
-├── .claude-plugin/marketplace.json
-└── pi/ask-user-more/              # pi extension (next increment)
+├── packages/tui/                  # exact questionnaire component + standalone host
+├── plugins/ask-user-more/         # MCP server, Claude plugin, pi extension, npm package
+└── .claude-plugin/marketplace.json
 ```
 
 - **Claude Code**: install the plugin from this marketplace, or run the MCP server

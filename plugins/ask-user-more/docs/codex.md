@@ -15,7 +15,7 @@ codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true --env ASK_USER_MORE
 Local checkout:
 
 ```bash
-codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true -- node C:\Users\votri\ask-user-more\plugins\ask-user-more\dist\server.mjs
+codex mcp add ask-user-more --env ASK_USER_MORE_ENABLED=true -- node <path-to-repo>\plugins\ask-user-more\dist\server.mjs
 ```
 
 Or edit `~/.codex/config.toml` directly:

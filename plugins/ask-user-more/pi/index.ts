@@ -67,11 +67,15 @@ function readSettings(): PiSettings {
 	}
 }
 
-function updateAskUserMore(patch: PiAskUserMoreSettings): PiAskUserMoreSettings {
-	const settings = readSettings();
-	settings.askUserMore = { ...settings.askUserMore, ...patch };
-	writeFileSync(SETTINGS_PATH, `${JSON.stringify(settings, null, 2)}\n`, "utf8");
-	return settings.askUserMore;
+function updateAskUserMore(patch: PiAskUserMoreSettings): boolean {
+	try {
+		const settings = readSettings();
+		settings.askUserMore = { ...settings.askUserMore, ...patch };
+		writeFileSync(SETTINGS_PATH, `${JSON.stringify(settings, null, 2)}\n`, "utf8");
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 function configForPi(ctx: { cwd: string; isProjectTrusted(): boolean }) {
@@ -220,7 +224,9 @@ export default function askUserMoreExtension(pi: ExtensionAPI) {
 				"Enable AskUserMore?",
 				"Use AskUserMore for multiple-choice questions in pi? You can change this later with /ask-user-more-config.",
 			);
-			updateAskUserMore({ enabled });
+			if (!updateAskUserMore({ enabled })) {
+				ctx.ui.notify("AskUserMore: could not save the consent decision; this session still honors it.", "warning");
+			}
 			if (!enabled) {
 				register(false);
 				return;
