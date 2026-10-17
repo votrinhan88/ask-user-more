@@ -1,0 +1,63 @@
+{
+  "name": "ask-user-more",
+  "version": "0.1.0",
+  "description": "AskUserMore \u2014 richer multiple-choice questions for Claude Code: notes, more than four options, and multi-question rounds.",
+  "author": {
+    "name": "Votri"
+  },
+  "keywords": [
+    "questions",
+    "ask-user",
+    "mcp",
+    "elicitation"
+  ],
+  "license": "MIT",
+  "userConfig": {
+    "enabled": {
+      "type": "boolean",
+      "title": "Enable AskUserMore",
+      "description": "Allow this harness to use AskUserMore. Turning this off hides the tool until you re-enable it.",
+      "default": true
+    },
+    "force": {
+      "type": "boolean",
+      "title": "Replace AskUserQuestion",
+      "description": "Block Claude's built-in AskUserQuestion and route questions to AskUserMore. Turn this off to keep the built-in.",
+      "default": true
+    },
+    "renderer": {
+      "type": "string",
+      "title": "Renderer",
+      "description": "auto picks the terminal TUI in terminal hosts and a native form in GUI hosts. Override with elicitation, terminal, or web.",
+      "default": "auto",
+      "options": [
+        "auto",
+        "elicitation",
+        "terminal",
+        "web"
+      ]
+    },
+    "warnOptionsAt": {
+      "type": "number",
+      "title": "Warn at options",
+      "description": "Warn when one question has this many options. 0 disables the warning.",
+      "default": 7
+    },
+    "warnQuestionsAt": {
+      "type": "number",
+      "title": "Warn at questions",
+      "description": "Warn when one call has this many questions. 0 disables the warning.",
+      "default": 9
+    },
+    "multiStyle": {
+      "type": "string",
+      "title": "Multi-select style",
+      "description": "array uses native multi-select. booleans uses one checkbox per option for clients without array support.",
+      "default": "array",
+      "options": [
+        "array",
+        "booleans"
+      ]
+    }
+  }
+}

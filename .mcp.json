@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "ask-user-more": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/dist/server.mjs"
+      ],
+      "env": {
+        "ASK_USER_MORE_USER_ENABLED": "${user_config.enabled}",
+        "ASK_USER_MORE_USER_RENDERER": "${user_config.renderer}",
+        "ASK_USER_MORE_USER_WARN_OPTIONS": "${user_config.warnOptionsAt}",
+        "ASK_USER_MORE_USER_WARN_QUESTIONS": "${user_config.warnQuestionsAt}",
+        "ASK_USER_MORE_USER_MULTI_STYLE": "${user_config.multiStyle}"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "AskUserMore: replace the built-in AskUserQuestion when enabled in userConfig.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

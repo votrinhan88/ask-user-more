@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ask-user-more",
+  "description": "AskUserMore plugin marketplace",
+  "owner": {
+    "name": "Votri"
+  },
+  "plugins": [
+    {
+      "name": "ask-user-more",
+      "description": "Richer multiple-choice questions for Claude Code: notes, more than four options, multi-question rounds.",
+      "source": "./plugins/ask-user-more"
+    }
+  ]
+}
