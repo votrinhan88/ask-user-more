@@ -12,9 +12,9 @@
     ".mcp.json",
     "hooks",
     "skills",
-    "pi",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "pi/index.js"
   ],
   "scripts": {
     "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs && esbuild ../../packages/tui/src/host.ts --bundle --platform=node --format=esm --outfile=dist/tui.mjs && esbuild pi/index.ts --bundle --platform=node --format=esm --outfile=pi/index.js --external:@earendil-works/pi-coding-agent --external:@earendil-works/pi-tui --external:@earendil-works/pi-ai",
