@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
-import { renderAnswerText } from "./format.ts";
+import { renderAnswerText } from "@ask-user-more/core";
 import {
 	AskUserMoreParams,
 	type AskQuestion,
@@ -19,8 +19,8 @@ import {
 	optionWarnings,
 	questionWarning,
 	validateQuestions,
-} from "./questions.ts";
-import { resolveConfig, updateUserConfig } from "./config.ts";
+} from "@ask-user-more/core";
+import { resolveConfig, updateUserConfig } from "@ask-user-more/core";
 import { askQuestions } from "./renderers/index.ts";
 
 const VERSION = "0.1.0";

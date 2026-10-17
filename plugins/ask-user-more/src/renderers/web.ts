@@ -10,7 +10,7 @@ import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
-import { orderedSelection, type AskAnswer, type AskQuestion } from "../questions.ts";
+import { orderedSelection, type AskAnswer, type AskQuestion } from "@ask-user-more/core";
 
 const MAX_BODY = 1_000_000;
 

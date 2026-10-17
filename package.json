@@ -1,31 +1,22 @@
 {
-  "name": "ask-user-more",
+  "name": "ask-user-more-repo",
   "version": "0.1.0",
-  "description": "AskUserMore — richer multiple-choice questions for Claude Code",
+  "private": true,
   "type": "module",
-  "bin": {
-    "ask-user-more": "dist/server.mjs"
-  },
-  "files": [
-    "dist",
-    ".claude-plugin",
-    ".mcp.json",
-    "hooks",
-    "skills",
-    "README.md"
+  "workspaces": [
+    "packages/*",
+    "plugins/*"
   ],
   "scripts": {
-    "build": "esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs",
-    "typecheck": "tsc --noEmit",
-    "start": "node dist/server.mjs",
-    "test": "node --experimental-strip-types --test test/*.test.ts test/*.test.mjs",
-    "test:integration": "node test/mcp.mjs"
+    "build": "npm run build -w ask-user-more",
+    "test": "npm run test -w @ask-user-more/core && npm run test -w ask-user-more",
+    "typecheck": "npm run typecheck -w @ask-user-more/core && npm run typecheck -w ask-user-more",
+    "integration": "npm run test:integration -w ask-user-more",
+    "validate": "claude plugin validate plugins/ask-user-more"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
-    "esbuild": "^0.25.0",
-    "typescript": "^5.7.0",
-    "@modelcontextprotocol/sdk": "^1.32.1",
-    "zod": "^4.6.7"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.0"
   }
 }

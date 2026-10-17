@@ -2,9 +2,9 @@
 
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
-import type { AskUserMoreConfig } from "../config.ts";
+import type { AskUserMoreConfig } from "@ask-user-more/core";
 import { buildForm } from "../elicit.ts";
-import type { AskAnswer, AskQuestion } from "../questions.ts";
+import type { AskAnswer, AskQuestion } from "@ask-user-more/core";
 
 export async function askViaElicitation(
 	server: Server,

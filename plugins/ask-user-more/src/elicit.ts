@@ -11,7 +11,7 @@
 
 import type { ElicitRequestFormParams } from "@modelcontextprotocol/sdk/types.js";
 
-import { orderedSelection, type AskAnswer, type AskOption, type AskQuestion } from "./questions.ts";
+import { orderedSelection, type AskAnswer, type AskOption, type AskQuestion } from "@ask-user-more/core";
 
 type RequestedSchema = ElicitRequestFormParams["requestedSchema"];
 export type MultiStyle = "array" | "booleans";

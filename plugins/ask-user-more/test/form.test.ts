@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { buildForm } from "../src/elicit.ts";
-import { renderAnswerText } from "../src/format.ts";
-import { normalizeQuestions, validateQuestions, type AskQuestion } from "../src/questions.ts";
+import { renderAnswerText } from "@ask-user-more/core";
+import { normalizeQuestions, validateQuestions, type AskQuestion } from "@ask-user-more/core";
 
 const questions: AskQuestion[] = normalizeQuestions([
 	{

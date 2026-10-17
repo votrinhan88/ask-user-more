@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { askViaWeb, parseWebSubmission, renderWebForm } from "../src/renderers/web.ts";
-import { normalizeQuestions, type AskQuestion } from "../src/questions.ts";
+import { normalizeQuestions, type AskQuestion } from "@ask-user-more/core";
 
 const questions: AskQuestion[] = normalizeQuestions([
 	{
