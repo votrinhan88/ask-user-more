@@ -59,8 +59,5 @@
   "engines": {
     "node": ">=22"
   },
-  "author": {
-    "name": "Votri",
-    "url": "https://github.com/votrinhan88"
-  }
+  "author": "votrinhan88"
 }

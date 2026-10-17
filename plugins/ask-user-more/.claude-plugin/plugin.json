@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "AskUserMore \u2014 richer multiple-choice questions for Claude Code: notes, more than four options, and multi-question rounds.",
   "author": {
-    "name": "Votri",
-    "url": "https://github.com/votrinhan88"
+    "name": "votrinhan88"
   },
   "keywords": [
     "questions",

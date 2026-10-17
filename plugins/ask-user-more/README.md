@@ -107,7 +107,7 @@ and the marketplace entry is at the repo root (see `docs/marketplace.example.jso
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "ask-user-more",
   "description": "AskUserMore plugin marketplace",
-  "owner": { "name": "Votri" },
+  "owner": { "name": "votrinhan88" },
   "plugins": [
     {
       "name": "ask-user-more",
